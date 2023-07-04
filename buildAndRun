@@ -1,0 +1,19 @@
+#!/bin/bash
+
+runCommand=$1
+
+docker build . -t ${IMAGE_NAME}:${IMAGE_TAG}
+
+docker run -it --rm \
+    -e AZURE_CLIENT_ID \
+    -e AZURE_CLIENT_SECRET \
+    -e AZURE_TENANT_ID \
+    -e AZURE_SUBSCRIPTION_ID \
+    -e LOCATION \
+    -e CLUSTER_RESOURCE_GROUP \
+    -e CLUSTER_NAME \
+    --network host \
+    -p 9001:9001 \
+    -p 8080:8080 \
+    ${IMAGE_NAME}:${IMAGE_TAG} \
+    "${runCommand}"
