@@ -1,0 +1,16 @@
+name: Build and Run Docker Container
+
+on:
+  push:
+
+jobs:
+  execute-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@main
+        with:
+          submodules: recursive
+
+      - name: Execute Shell Script
+        run: sh build
