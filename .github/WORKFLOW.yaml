@@ -1,0 +1,39 @@
+name: Build and Run
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set Environment Variables
+        run: |
+          echo "AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "AZURE_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "AZURE_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> $GITHUB_ENV
+          echo "AZURE_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+          echo "LOCATION=westeurope" >> $GITHUB_ENV
+          echo "CLUSTER_RESOURCE_GROUP=oysteinje-aks-build-$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+          echo "CLUSTER_NAME=oysteinje-aks-build-$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+          echo "IMAGE_TAG=0.0.1-dev" >> $GITHUB_ENV
+          echo "IMAGE_NAME=aks-container" >> $GITHUB_ENV
+          echo "DOCKER_NAMESPACE=oysteinje" >> $GITHUB_ENV
+
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Run Build and Run Script
+        run: |
+          chmod +x buildAndRun
+          chmod +x push
+          ./buildAndRun
+          ./buildAndRun create
+          ./buildAndRun stop
+          ./buildAndRun destroy
+          ./push
